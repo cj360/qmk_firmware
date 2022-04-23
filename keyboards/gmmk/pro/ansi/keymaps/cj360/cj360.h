@@ -27,7 +27,6 @@ enum layout_names {
 
 enum custom_keycodes {
     KC_CCCV = SAFE_RANGE,  // Hold to copy, tap to paste
-    KC_BASE,
 
     KC_SECRET_1,
     KC_SECRET_2,
@@ -83,8 +82,6 @@ enum combos {
 #define KC_RGBP KC_RGB_ENC_EFFECT_SPEED
 
 #define KC_WRGB KC_WPM_RGB
-
-#define KC_BASE KC_BASE
 
 #define KC_RESET RESET
 #define KC_RST KC_RESET
