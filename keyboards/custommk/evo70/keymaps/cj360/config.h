@@ -16,6 +16,10 @@
 
 #pragma once
 
+#define OLED_TIMEOUT 120000
+#define OLED_FADE_OUT
+
+// save some space
 #define NO_MUSIC_MODE
 #define NO_ACTION_MACRO
 #define LAYER_STATE_8BIT
