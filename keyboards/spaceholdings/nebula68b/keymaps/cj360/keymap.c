@@ -74,7 +74,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRNS, KC_NO, KC_TRNS,                  KC_TRNS,                               KC_TRNS, KC_TRNS, KC_TRNS,                   KC_TRNS, KC_TRNS, KC_TRNS)
 };
 
-//Entirely Red for capslock
+// Entirely Red for Capslock
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (host_keyboard_led_state().caps_lock) {
         for (uint8_t i = led_min; i < led_max; i++) {
@@ -88,12 +88,18 @@ bool rgb_matrix_indicators_user(void) {
   uint8_t layer = get_highest_layer(layer_state);
   switch (layer) {
     case _FN:
+    // Blue Caps & right function keys
+      rgb_matrix_set_color(37, 0, 255, 200);
       rgb_matrix_set_color(72, 0, 255, 200);
       break;
     case _GAME:
-      rgb_matrix_set_color(65, 0, 255, 0);
+      // Green Spacebar & wasd
+      rgb_matrix_set_color(33, 0, 255, 0);
+      rgb_matrix_set_color(38, 0, 255, 0);
+      rgb_matrix_set_color(39, 0, 255, 0);
+      rgb_matrix_set_color(40, 0, 255, 0);
+      rgb_matrix_set_color(69, 0, 255, 0);
       break;
   }
     return false;
 }
-
