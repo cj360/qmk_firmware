@@ -9,6 +9,15 @@ enum layer_names {
     _GAME = 2
 };
 
+#define SPAM_DELAY 50  // 50 milliseconds between spams
+bool spam_active = false;
+uint32_t spam_timer = 0;
+
+enum custom_keycodes {
+    holdz = SAFE_RANGE, // Create a keycode to make your toggle initialize
+};
+
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     /* Base Layer
@@ -55,24 +64,47 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     /* Game Layer
      * ,-----------------------------------------------------------------------.
-     * |  |   |   |   |   |   |   |   |   |   |   |    |     |    |     |      |
+     * |  |   |   |   |   |   |   |    |   |   |   |    |     |    |     |     |
      * |-----------------------------------------------------------------------|
-     * |  |   |   |   |   |   |   |   |   |   |   |    |     |    |     |      |
+     * |  |   |   |   |   |   |   |    |   |   |   |    |     |    |     |     |
      * |-----------------------------------------------------------------------|
-     * |          |   |   |   |   |   |   |   |   |    |     |    |     |      |
+     * |      |    |    |    |    |    |   |   |   |    |     |    |     |     |
      * |-----------------------------------------------------------------------|
-     * |          |   |   |   |   |   |   |   |   |    |     |    |     |      |
+     * |      |holdz|    |   |    |    |   |   |   |    |     |    |     |     |
      * |-----------------------------------------------------------------------|
-     * |   |   |   |                           |  |    |     |    |     |      |
+     * |   |   |   |                           |   |    |     |    |     |     |
      * `-----------------------------------------------------------------------'
      */
 [_GAME] = LAYOUT_68_ansi_split_bs(
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS, KC_TRNS,
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS,
-    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                            KC_TRNS,
+    KC_TRNS, holdz, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                            KC_TRNS,
     KC_TRNS, KC_NO, KC_TRNS,                  KC_TRNS,                               KC_TRNS, KC_TRNS, KC_TRNS,                   KC_TRNS, KC_TRNS, KC_TRNS)
 };
+
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  switch (keycode) {
+    case holdz:  // When you press custom SPAM keycode
+      if (record->event.pressed) {
+        spam_active = !spam_active;  // Toggle spamming
+        spam_timer = timer_read32(); // Reset spam timer
+      }
+      break;
+  }
+  return true;
+}
+
+void matrix_scan_user(void){
+  if (spam_active) {
+    // Check if it's been SPAM_DELAY milliseconds since the last spam
+    if (timer_elapsed32(spam_timer) > SPAM_DELAY) {
+      tap_code(KC_Z);           // Send an Z keystroke
+      spam_timer = timer_read32();  // Reset spam timer
+    }
+  }
+}
 
 // Entirely Red for Capslock
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
